@@ -1,6 +1,6 @@
 {
   "name": "@unison-lang/ui-core-scripts",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Various helper scripts to install and update ui-core adjacent UI libraries) in host applications.",
   "repository": {
     "type": "git",
@@ -13,6 +13,6 @@
   "bin": {
     "ui-core-install": "./ui-core-install.js",
     "ui-core-update": "./ui-core-update.js",
-    "ui-core-check-css": "./check-css-vars.mjs.js"
+    "ui-core-check-css": "./check-css-vars.mjs"
   }
 }
