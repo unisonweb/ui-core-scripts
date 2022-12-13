@@ -11,7 +11,7 @@ Suggest adding them in the host application "scripts" section of package.json li
 ```json
 {
   "scripts": {
-    "ui-core-check-css": "check-css-vars",
+    "ui-core-check-css": "ui-core-check-css",
     "ui-core-install": "ui-core-install",
     "ui-core-update": "ui-core-update",
     "postinstall": "ui-core-install"
