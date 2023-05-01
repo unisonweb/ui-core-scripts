@@ -82,7 +82,7 @@ function elmGitInstall() {
         .then(elmDeps)
         .then((appDeps) => {
           return uiCoreDeps.reduce((acc, dep) => {
-            if (!elmDeps.some((d => d.name === dep.name && d.version === dep.version))) {
+            if (!appDeps.some((d => d.name === dep.name))) {
               return acc.concat(dep);
             }
             else {
