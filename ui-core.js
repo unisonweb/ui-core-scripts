@@ -70,7 +70,7 @@ function elmGitInstall() {
         .then(elmDeps)
         .then((appDeps) => {
           return uiCoreDeps.reduce((acc, dep) => {
-            if (!elmDeps.some((d => d.name === dep.name && d.version === dep.version)) {
+            if (!elmDeps.some((d => d.name === dep.name && d.version === dep.version))) {
               return acc.concat(dep);
             }
             else {
@@ -78,11 +78,11 @@ function elmGitInstall() {
             }
           }, []);
         });
-    });
+    })
     .then((deps) =>
       deps.reduce((p, d) => {
         return p.then(sleep(500))
-                .then((_) => run(install(d))
+                .then((_) => run(install(d)));
       }), Promise.resolve())
     )
     .then(() => run(npmInstall()));
