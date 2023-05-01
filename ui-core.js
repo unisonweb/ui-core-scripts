@@ -65,7 +65,7 @@ function elmGitInstall() {
     .then(JSON.parse)
     .then(elmDeps)
     .then((uiCoreDeps) => {
-      fs.readFile("./elm.json")
+      return fs.readFile("./elm.json")
         .then(JSON.parse)
         .then(elmDeps)
         .then((appDeps) => {
@@ -79,12 +79,12 @@ function elmGitInstall() {
           }, []);
         });
     })
-    .then((deps) =>
-      deps.reduce((p, d) => {
+    .then((deps) => {
+      return deps.reduce((p, d) => {
         return p.then(sleep(500))
                 .then((_) => run(install(d)));
-      }), Promise.resolve())
-    )
+      }, Promise.resolve());
+    })
     .then(() => run(npmInstall()));
 
   function run(cmd) {
