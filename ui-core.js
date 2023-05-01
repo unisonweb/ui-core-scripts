@@ -47,9 +47,19 @@ function getLatestUICoreSha() {
 }
 
 function elmDeps(elmJsonContents) {
-  return Object.keys(elmJsonContents.dependencies).map((name) => {
+
+  let deps = elmJsonContents.dependencies;
+
+  if ("direct" in deps) {
+    deps = {
+      ...deps.direct,
+      ...deps.indirect
+    };
+  }
+
+  return Object.keys(deps).map((name) => {
     // A version range looks like so: "1.0.0 <= v < 2.0.0"
-    const versionRange = elmJsonContents.dependencies[name];
+    const versionRange = deps[name];
     // take the major version
     let version = versionRange.split(".")[0];
 
