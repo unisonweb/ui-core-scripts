@@ -63,7 +63,7 @@ function elmGitInstall() {
       fs.readFile("./elm-stuff/gitdeps/github.com/unisonweb/ui-core/elm.json")
     )
     .then(JSON.parse)
-    .then((elmDeps)
+    .then(elmDeps)
     .then((uiCoreDeps) => {
       fs.readFile("./elm.json")
         .then(JSON.parse)
