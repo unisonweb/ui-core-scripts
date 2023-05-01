@@ -2,6 +2,10 @@ const fs = require("fs/promises");
 const p = require("child_process");
 const { Octokit } = require("@octokit/core");
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function install(dep) {
   return `npx elm-json install ${dep.name}@${dep.version} --yes`;
 }
@@ -42,13 +46,7 @@ function getLatestUICoreSha() {
     .then((x) => x.data[0].sha);
 }
 
-function elmGitInstall() {
-  return run("npx elm-git-install")
-    .then(() =>
-      fs.readFile("./elm-stuff/gitdeps/github.com/unisonweb/ui-core/elm.json")
-    )
-    .then(JSON.parse)
-    .then((uiCore) => {
+function elmDeps(elmJsonContents) {
       return Object.keys(uiCore.dependencies).map((name) => {
         // A version range looks like so: "1.0.0 <= v < 2.0.0"
         const versionRange = uiCore.dependencies[name];
@@ -57,9 +55,35 @@ function elmGitInstall() {
 
         return { name, version };
       });
-    })
+}
+
+function elmGitInstall() {
+  return run("npx elm-git-install")
+    .then(() =>
+      fs.readFile("./elm-stuff/gitdeps/github.com/unisonweb/ui-core/elm.json")
+    )
+    .then(JSON.parse)
+    .then((elmDeps)
+    .then((uiCoreDeps) => {
+      fs.readFile("./elm.json")
+        .then(JSON.parse)
+        .then(elmDeps)
+        .then((appDeps) => {
+          return uiCoreDeps.reduce((acc, dep) => {
+            if (!elmDeps.some((d => d.name === dep.name && d.version === dep.version)) {
+              return acc.concat(dep);
+            }
+            else {
+              return acc;
+            }
+          }, []);
+        });
+    });
     .then((deps) =>
-      deps.reduce((p, d) => p.then((_) => run(install(d))), Promise.resolve())
+      deps.reduce((p, d) => {
+        return p.then(sleep(500))
+                .then((_) => run(install(d))
+      }), Promise.resolve())
     )
     .then(() => run(npmInstall()));
 
