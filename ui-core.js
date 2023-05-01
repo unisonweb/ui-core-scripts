@@ -56,8 +56,6 @@ function elmDeps(elmJsonContents) {
     };
   }
 
-  console.log(deps);
-
   return Object.keys(deps).map((name) => {
     // A version range looks like so: "1.0.0 <= v < 2.0.0"
     const versionRange = deps[name];
@@ -92,13 +90,13 @@ function elmGitInstall() {
         });
     })
     .then((deps) => {
-      console.log(`Only ${deps.length} need to be installed`);
+      console.log(`${deps.length} need to be installed`);
       return deps.reduce((p, d) => {
         return p.then((_) => {
           console.log(`Installing ${d.name}@${d.version}`);
           return run(install(d));
         })
-        .then(sleep(500));
+        .then(sleep(250));
       }, Promise.resolve());
     })
     .then(() => run(npmInstall()));
