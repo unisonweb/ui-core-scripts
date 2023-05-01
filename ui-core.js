@@ -65,6 +65,7 @@ function elmGitInstall() {
     .then(JSON.parse)
     .then(elmDeps)
     .then((uiCoreDeps) => {
+      console.log(`Found ${uiCoreDeps.length} UI Core dependencies`);
       return fs.readFile("./elm.json")
         .then(JSON.parse)
         .then(elmDeps)
@@ -80,6 +81,7 @@ function elmGitInstall() {
         });
     })
     .then((deps) => {
+      console.log(`Only ${deps.length} need to be installed`);
       return deps.reduce((p, d) => {
         return p.then(sleep(500))
                 .then((_) => run(install(d)));
