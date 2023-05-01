@@ -47,14 +47,14 @@ function getLatestUICoreSha() {
 }
 
 function elmDeps(elmJsonContents) {
-      return Object.keys(uiCore.dependencies).map((name) => {
-        // A version range looks like so: "1.0.0 <= v < 2.0.0"
-        const versionRange = uiCore.dependencies[name];
-        // take the major version
-        let version = versionRange.split(".")[0];
+  return Object.keys(elmJsonContents.dependencies).map((name) => {
+    // A version range looks like so: "1.0.0 <= v < 2.0.0"
+    const versionRange = elmJsonContents.dependencies[name];
+    // take the major version
+    let version = versionRange.split(".")[0];
 
-        return { name, version };
-      });
+    return { name, version };
+  });
 }
 
 function elmGitInstall() {
