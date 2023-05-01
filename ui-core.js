@@ -47,7 +47,6 @@ function getLatestUICoreSha() {
 }
 
 function elmDeps(elmJsonContents) {
-
   let deps = elmJsonContents.dependencies;
 
   if ("direct" in deps) {
@@ -56,6 +55,8 @@ function elmDeps(elmJsonContents) {
       ...deps.indirect
     };
   }
+
+  console.log(deps);
 
   return Object.keys(deps).map((name) => {
     // A version range looks like so: "1.0.0 <= v < 2.0.0"
@@ -93,8 +94,11 @@ function elmGitInstall() {
     .then((deps) => {
       console.log(`Only ${deps.length} need to be installed`);
       return deps.reduce((p, d) => {
-        return p.then(sleep(500))
-                .then((_) => run(install(d)));
+        return p.then((_) => {
+          console.log(`Installing ${d.name}@${d.version}`);
+          return run(install(d));
+        })
+        .then(sleep(500));
       }, Promise.resolve());
     })
     .then(() => run(npmInstall()));
