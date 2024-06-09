@@ -34,6 +34,29 @@ function replaceElmGitSha(sha) {
     .then((data) => fs.writeFile("./elm-git.json", data));
 }
 
+function replaceElmGitRepoSha(repo, sha) {
+  return fs
+    .readFile("./elm-git.json")
+    .then(JSON.parse)
+    .then((json) => {
+      const direct = json["git-dependencies"].direct;
+      delete direct["https://github.com/unisonweb/ui-core"]; // remove default ui-core to replace with custom one
+
+      return {
+        ...json,
+        ["git-dependencies"]: {
+          ...json["git-dependencies"],
+          direct: {
+            ...direct,
+            [repo]: sha,
+          },
+        },
+      };
+    })
+    .then(JSON.stringify)
+    .then((data) => fs.writeFile("./elm-git.json", data));
+}
+
 function getLatestUICoreSha() {
   const octokit = new Octokit();
 
@@ -121,6 +144,7 @@ module.exports = {
   install,
   elmGitInstall,
   replaceElmGitSha,
+  replaceElmGitURL,
   elmGitInstall,
   getLatestUICoreSha,
 };
