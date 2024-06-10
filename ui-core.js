@@ -144,7 +144,7 @@ module.exports = {
   install,
   elmGitInstall,
   replaceElmGitSha,
-  replaceElmGitURL,
+  replaceElmGitRepoSha,
   elmGitInstall,
   getLatestUICoreSha,
 };
