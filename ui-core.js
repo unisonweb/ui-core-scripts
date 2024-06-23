@@ -42,6 +42,8 @@ function replaceElmGitRepoSha(repo, sha) {
     .then(JSON.parse)
     .then((json) => {
       const direct = json["git-dependencies"].direct;
+
+      // TODO: remove '*/ui-core'
       delete direct["https://github.com/unisonweb/ui-core"]; // remove default ui-core to replace with custom one
 
       return {
@@ -57,6 +59,24 @@ function replaceElmGitRepoSha(repo, sha) {
     })
     .then(JSON.stringify)
     .then((data) => fs.writeFile("./elm-git.json", data));
+}
+
+function getUICoreOriginFromElmGit() {
+  return fs
+    .readFile("./elm-git.json")
+    .then(JSON.parse)
+    .then((json) => {
+      const directDict = json["git-dependencies"].direct;
+      for (const [key, value] of Object.entries(directDict)) {
+        if (key.includes("ui-core")) {
+          return {
+            url: key,
+            sha: value,
+          };
+        }
+      }
+      return undefined;
+    });
 }
 
 function getLatestUICoreSha() {
@@ -152,4 +172,5 @@ module.exports = {
   replaceElmGitRepoSha,
   elmGitInstall,
   getLatestUICoreSha,
+  getUICoreOriginFromElmGit,
 };

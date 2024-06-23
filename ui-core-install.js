@@ -4,6 +4,7 @@ const {
   elmGitInstall,
   replaceElmGitSha,
   replaceElmGitRepoSha,
+  getUICoreOriginFromElmGit,
 } = require("./ui-core");
 
 const shaArg = process.argv.slice(2)[0];
@@ -20,15 +21,29 @@ if (repoArg && shaArg) {
       elmGitInstall(repoArg.replace("https://", "./elm-stuff/gitdeps/"))
     );
 } else {
-  Promise.resolve(shaArg)
-    .then((sha) => {
-      if (sha) {
-        console.log(`Replace elm-git sha:`);
-        console.log({ sha: shaArg });
-        return replaceElmGitSha(sha);
-      } else {
+  getUICoreOriginFromElmGit()
+    .then((uiCoreOrigin) => {
+      if (!uiCoreOrigin) {
+        console.error("No ui-core setting in elm-git.json!");
         return;
       }
+      if (shaArg) {
+        console.log(`Replace elm-git sha:`);
+        console.log({ sha: shaArg });
+        return replaceElmGitRepoSha(uiCoreOrigin.url, shaArg).then(
+          () => uiCoreOrigin
+        );
+      } else {
+        return Promise.resolve(uiCoreOrigin);
+      }
     })
-    .then(() => elmGitInstall());
+    .then((uiCoreOrigin) => {
+      if (!uiCoreOrigin) {
+        console.error("No ui-core setting in elm-git.json!");
+        return;
+      }
+      return elmGitInstall(
+        uiCoreOrigin.url.replace("https://", "./elm-stuff/gitdeps/")
+      );
+    });
 }
