@@ -16,7 +16,9 @@ if (repoArg && shaArg) {
     .then((args) => {
       return replaceElmGitRepoSha(args.repo, args.sha);
     })
-    .then(() => elmGitInstall());
+    .then(() =>
+      elmGitInstall(repoArg.replace("https://", "./elm-stuff/gitdeps/"))
+    );
 } else {
   Promise.resolve(shaArg)
     .then((sha) => {
