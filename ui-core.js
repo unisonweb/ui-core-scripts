@@ -43,8 +43,12 @@ function replaceElmGitRepoSha(repo, sha) {
     .then((json) => {
       const direct = json["git-dependencies"].direct;
 
-      // TODO: remove '*/ui-core'
-      delete direct["https://github.com/unisonweb/ui-core"]; // remove default ui-core to replace with custom one
+      // remove ui-core dependencies to replace with custom one
+      Object.keys(direct).forEach((key) => {
+        if (key.endsWith("/ui-core")) {
+          delete direct[key];
+        }
+      });
 
       return {
         ...json,
