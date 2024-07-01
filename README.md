@@ -20,18 +20,20 @@ Suggest adding them in the host application "scripts" section of package.json li
 
 ### `ui-core-install` Usage
 
-To install a specific sha:
+- To install with a specific sha:
 
-```bash
-npm run ui-core-install -- [SOME_UI_CORE_SHA]
-```
+  ```bash
+  npm run ui-core-install -- [SOME_UI_CORE_SHA]
+  ```
 
-To install a specific repo & sha (e.g. forked repo):
+  Note: This sha needs to be in `unisonweb/ui-core` repository.
 
-```bash
-npm run ui-core-install -- [SOME_UI_CORE_SHA] [SOME_UI_CORE_URL]
-# e.g. SOME_UI_CORE_URL=https://github.com/some-user/ui-core
-```
+- To install with a specific repo & sha (e.g. forked repo):
+
+  ```bash
+  npm run ui-core-install -- [SOME_UI_CORE_SHA] [SOME_UI_CORE_URL]
+  # e.g. SOME_UI_CORE_URL=https://github.com/some-user/ui-core
+  ```
 
 ## Community
 

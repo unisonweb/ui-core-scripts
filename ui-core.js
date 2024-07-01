@@ -16,26 +16,6 @@ function npmInstall(
   return `npm install -C ${uiCorePath}`;
 }
 
-function replaceElmGitSha(sha) {
-  return fs
-    .readFile("./elm-git.json")
-    .then(JSON.parse)
-    .then((json) => {
-      return {
-        ...json,
-        ["git-dependencies"]: {
-          ...json["git-dependencies"],
-          direct: {
-            ...json["git-dependencies"].direct,
-            ["https://github.com/unisonweb/ui-core"]: sha,
-          },
-        },
-      };
-    })
-    .then(JSON.stringify)
-    .then((data) => fs.writeFile("./elm-git.json", data));
-}
-
 function replaceElmGitRepoSha(repo, sha) {
   return fs
     .readFile("./elm-git.json")
@@ -172,7 +152,6 @@ function elmGitInstall(
 module.exports = {
   install,
   elmGitInstall,
-  replaceElmGitSha,
   replaceElmGitRepoSha,
   elmGitInstall,
   getLatestUICoreSha,
