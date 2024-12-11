@@ -3,9 +3,11 @@
 const {
   getLatestUICoreSha,
   elmGitInstall,
-  replaceElmGitSha,
+  replaceElmGitRepoSha,
 } = require("./ui-core");
 
 getLatestUICoreSha()
-  .then(replaceElmGitSha)
+  .then((sha) => {
+    return replaceElmGitRepoSha("https://github.com/unisonweb/ui-core", sha);
+  })
   .then(() => elmGitInstall());

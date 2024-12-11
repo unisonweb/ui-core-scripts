@@ -1,0 +1,12 @@
+{
+  "name": "ui-core-scripts-example",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "ui-core-install": "ui-core-install",
+    "ui-core-update": "ui-core-update"
+  },
+  "devDependencies": {
+    "ui-core-scripts": "file:../"
+  }
+}

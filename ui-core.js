@@ -3,35 +3,64 @@ const p = require("child_process");
 const { Octokit } = require("@octokit/core");
 
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function install(dep) {
   return `npx elm-json install ${dep.name}@${dep.version} --yes`;
 }
 
-function npmInstall() {
-  return "npm install -C ./elm-stuff/gitdeps/github.com/unisonweb/ui-core";
+function npmInstall(
+  uiCorePath = "./elm-stuff/gitdeps/github.com/unisonweb/ui-core"
+) {
+  return `npm install -C ${uiCorePath}`;
 }
 
-function replaceElmGitSha(sha) {
+function replaceElmGitRepoSha(repo, sha) {
   return fs
     .readFile("./elm-git.json")
     .then(JSON.parse)
     .then((json) => {
+      const direct = json["git-dependencies"].direct;
+
+      // remove ui-core dependencies to replace with custom one
+      Object.keys(direct).forEach((key) => {
+        if (key.endsWith("/ui-core")) {
+          delete direct[key];
+        }
+      });
+
       return {
         ...json,
         ["git-dependencies"]: {
           ...json["git-dependencies"],
           direct: {
-            ...json["git-dependencies"].direct,
-            ["https://github.com/unisonweb/ui-core"]: sha,
+            ...direct,
+            [repo]: sha,
           },
         },
       };
     })
     .then(JSON.stringify)
     .then((data) => fs.writeFile("./elm-git.json", data));
+}
+
+function getUICoreOriginFromElmGit() {
+  return fs
+    .readFile("./elm-git.json")
+    .then(JSON.parse)
+    .then((json) => {
+      const directDict = json["git-dependencies"].direct;
+      for (const [key, value] of Object.entries(directDict)) {
+        if (key.includes("ui-core")) {
+          return {
+            url: key,
+            sha: value,
+          };
+        }
+      }
+      return undefined;
+    });
 }
 
 function getLatestUICoreSha() {
@@ -52,7 +81,7 @@ function elmDeps(elmJsonContents) {
   if ("direct" in deps) {
     deps = {
       ...deps.direct,
-      ...deps.indirect
+      ...deps.indirect,
     };
   }
 
@@ -66,24 +95,26 @@ function elmDeps(elmJsonContents) {
   });
 }
 
-function elmGitInstall() {
+function elmGitInstall(
+  uiCorePath = "./elm-stuff/gitdeps/github.com/unisonweb/ui-core"
+) {
   return run("npx elm-git-install")
-    .then(() =>
-      fs.readFile("./elm-stuff/gitdeps/github.com/unisonweb/ui-core/elm.json")
-    )
+    .then(() => {
+      return fs.readFile(`${uiCorePath}/elm.json`);
+    })
     .then(JSON.parse)
     .then(elmDeps)
     .then((uiCoreDeps) => {
       console.log(`Found ${uiCoreDeps.length} UI Core dependencies`);
-      return fs.readFile("./elm.json")
+      return fs
+        .readFile("./elm.json")
         .then(JSON.parse)
         .then(elmDeps)
         .then((appDeps) => {
           return uiCoreDeps.reduce((acc, dep) => {
-            if (!appDeps.some((d => d.name === dep.name))) {
+            if (!appDeps.some((d) => d.name === dep.name)) {
               return acc.concat(dep);
-            }
-            else {
+            } else {
               return acc;
             }
           }, []);
@@ -92,14 +123,15 @@ function elmGitInstall() {
     .then((deps) => {
       console.log(`${deps.length} need to be installed`);
       return deps.reduce((p, d) => {
-        return p.then((_) => {
-          console.log(`Installing ${d.name}@${d.version}`);
-          return run(install(d));
-        })
-        .then(sleep(250));
+        return p
+          .then((_) => {
+            console.log(`Installing ${d.name}@${d.version}`);
+            return run(install(d));
+          })
+          .then(sleep(250));
       }, Promise.resolve());
     })
-    .then(() => run(npmInstall()));
+    .then(() => run(npmInstall(uiCorePath)));
 
   function run(cmd) {
     return new Promise((resolve, _reject) => {
@@ -120,7 +152,8 @@ function elmGitInstall() {
 module.exports = {
   install,
   elmGitInstall,
-  replaceElmGitSha,
+  replaceElmGitRepoSha,
   elmGitInstall,
   getLatestUICoreSha,
+  getUICoreOriginFromElmGit,
 };
