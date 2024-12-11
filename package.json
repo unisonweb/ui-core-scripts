@@ -1,6 +1,6 @@
 {
   "name": "@unison-lang/ui-core-scripts",
-  "version": "1.1.9",
+  "version": "1.2.0",
   "description": "Various helper scripts to install and update ui-core adjacent UI libraries) in host applications.",
   "repository": {
     "type": "git",
